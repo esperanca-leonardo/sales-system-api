@@ -1,5 +1,6 @@
 package com.esperanca.api.salessystem.entities;
 
+import com.esperanca.api.salessystem.dtos.customers.CustomerInputDto;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -39,9 +40,7 @@ public class CustomerEntity implements Serializable {
     name = customerInputDto.getName();
     cpf = customerInputDto.getCpf();
     cellPhoneNumber = customerInputDto.getCellPhoneNumber();
-  }
 
-  public void setCurrentDateForInsert() {
     setRegistrationDate(LocalDateTime.now(ZoneId.of("America/Sao_Paulo")));
     setUpdateDate(LocalDateTime.now(ZoneId.of("America/Sao_Paulo")));
   }
@@ -54,6 +53,7 @@ public class CustomerEntity implements Serializable {
     name = customerInputDto.getName();
     cpf = customerInputDto.getCpf();
     cellPhoneNumber = customerInputDto.getCellPhoneNumber();
+
     setCurrentDateForUpdate();
   }
 }

@@ -1,5 +1,8 @@
 package com.esperanca.api.salessystem.services;
 
+import com.esperanca.api.salessystem.dtos.customers.CustomerOutputDto;
+import com.esperanca.api.salessystem.dtos.customers.CustomerInputDto;
+import com.esperanca.api.salessystem.entities.CustomerEntity;
 import com.esperanca.api.salessystem.repositories.CustomerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,22 +19,21 @@ public class CustomerService {
 
   @Transactional
   public CustomerOutputDto save(CustomerInputDto customerInputDto) {
-    CustomerModel customerModel = new CustomerModel(customerInputDto);
+    CustomerEntity customerEntity = new CustomerEntity(customerInputDto);
 
-    customerModel.setCurrentDateForInsert();
-    customerRepository.save(customerModel);
+    customerRepository.save(customerEntity);
 
-    return new CustomerOutputDto(customerModel);
+    return new CustomerOutputDto(customerEntity);
   }
 
   @Transactional
   public CustomerOutputDto save(CustomerInputDto customerInputDto, Integer id) {
-    CustomerModel customerModel = customerRepository.findById(id).get();
+    CustomerEntity customerEntity = customerRepository.findById(id).get();
 
-    customerModel.setAttributesForUpdate(customerInputDto);
-    customerRepository.save(customerModel);
+    customerEntity.setAttributesForUpdate(customerInputDto);
+    customerRepository.save(customerEntity);
 
-    return new CustomerOutputDto(customerModel);
+    return new CustomerOutputDto(customerEntity);
   }
 
   public List<CustomerOutputDto> findAll() {
