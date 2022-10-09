@@ -1,13 +1,16 @@
 package com.esperanca.api.salessystem.entities;
 
-import lombok.Data;
+import com.esperanca.api.salessystem.dtos.products.ProductInputDto;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 
-@Data
+@Getter
+@Setter
 @Entity
 @Table(name = "Product")
 public class ProductEntity implements Serializable {
@@ -39,11 +42,13 @@ public class ProductEntity implements Serializable {
     name = productInputDto.getName();
     description = productInputDto.getDescription();
     price = productInputDto.getPrice();
+
+    setCurrentDateForInsert();
   }
 
   public void setCurrentDateForInsert() {
     setRegistrationDate(LocalDateTime.now(ZoneId.of("America/Sao_Paulo")));
-    setUpdateDate(LocalDateTime.now(ZoneId.of("America/Sao_Paulo")));
+    setCurrentDateForUpdate();
   }
 
   public void setCurrentDateForUpdate() {

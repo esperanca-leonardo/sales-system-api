@@ -1,13 +1,15 @@
 package com.esperanca.api.salessystem.entities;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 
-@Data
+@Getter
+@Setter
 @Entity
 @Table(name = "ShoppingCart")
 public class ShoppingCartEntity implements Serializable {

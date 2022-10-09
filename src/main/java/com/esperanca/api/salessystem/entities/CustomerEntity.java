@@ -1,14 +1,16 @@
 package com.esperanca.api.salessystem.entities;
 
 import com.esperanca.api.salessystem.dtos.customers.CustomerInputDto;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 
-@Data
+@Getter
+@Setter
 @Entity
 @Table(name = "Customer")
 public class CustomerEntity implements Serializable {

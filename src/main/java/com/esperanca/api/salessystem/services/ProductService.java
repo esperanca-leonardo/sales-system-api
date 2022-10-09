@@ -1,5 +1,9 @@
 package com.esperanca.api.salessystem.services;
 
+import com.esperanca.api.salessystem.dtos.products.ProductInputDto;
+import com.esperanca.api.salessystem.dtos.products.ProductOutputDto;
+import com.esperanca.api.salessystem.entities.ProductEntity;
+import com.esperanca.api.salessystem.repositories.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,20 +18,21 @@ public class ProductService {
   ProductRepository productRepository;
   @Transactional
   public ProductOutputDto save(ProductInputDto productInputDto) {
-    ProductModel productModel = new ProductModel(productInputDto);
-    productModel.setCurrentDateForInsert();
-    productRepository.save(productModel);
+    ProductEntity productEntity = new ProductEntity(productInputDto);
 
-    return new ProductOutputDto(productModel);
+    productRepository.save(productEntity);
+
+    return new ProductOutputDto(productEntity);
   }
 
   @Transactional
   public ProductOutputDto save(ProductInputDto productInputDto, Integer id) {
-    ProductModel productModel = productRepository.findById(id).get();
-    productModel.setAttributesForUpdate(productInputDto);
-    productRepository.save(productModel);
+    ProductEntity productEntity = productRepository.findById(id).get();
 
-    return new ProductOutputDto(productModel);
+    productEntity.setAttributesForUpdate(productInputDto);
+    productRepository.save(productEntity);
+
+    return new ProductOutputDto(productEntity);
   }
 
   public List<ProductOutputDto> findAll() {

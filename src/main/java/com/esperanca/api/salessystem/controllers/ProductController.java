@@ -1,8 +1,8 @@
 package com.esperanca.api.salessystem.controllers;
 
-import com.api.vendas.dtos.products.ProductInputDto;
-import com.api.vendas.dtos.products.ProductOutputDto;
-import com.api.vendas.services.ProductService;
+import com.esperanca.api.salessystem.dtos.products.ProductInputDto;
+import com.esperanca.api.salessystem.dtos.products.ProductOutputDto;
+import com.esperanca.api.salessystem.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
