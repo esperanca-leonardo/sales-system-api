@@ -22,7 +22,7 @@ public class PurchaseEntity implements Serializable {
 
   @ManyToOne
   @JoinColumn(name = "customer_id")
-  private CustomerModel customer;
+  private CustomerEntity customer;
 
   @Column(nullable = false)
   private Float total;
@@ -33,10 +33,10 @@ public class PurchaseEntity implements Serializable {
   @Column(nullable = false)
   private LocalDateTime updateDate;
 
-  public PurchaseEntity() {}
+  public PurchaseEntity() {
+    total = 0F;
 
-  public PurchaseEntity(PurchaseInputDto purchaseInputDto) {
-    total = purchaseInputDto.getTotal();
+    setCurrentDateForInsert();
   }
 
   public void setCurrentDateForInsert() {

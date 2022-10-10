@@ -1,5 +1,6 @@
 package com.esperanca.api.salessystem.entities;
 
+import com.esperanca.api.salessystem.dtos.shoppingcarts.ShoppingCartInputDto;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -22,11 +23,11 @@ public class ShoppingCartEntity implements Serializable {
 
   @ManyToOne
   @JoinColumn(name = "product_id")
-  private ProductModel product;
+  private ProductEntity product;
 
   @ManyToOne
   @JoinColumn(name = "purchase_id")
-  private PurchaseModel purchase;
+  private PurchaseEntity purchase;
 
   @Column(nullable = false)
   private Integer quantity;
@@ -42,14 +43,17 @@ public class ShoppingCartEntity implements Serializable {
 
   public ShoppingCartEntity() {}
 
-  public ShoppingCartEntity(ShoppingCartEntityInputDto shoppingCartEntityInputDto) {
+  public ShoppingCartEntity(ShoppingCartInputDto shoppingCartEntityInputDto) {
     quantity = shoppingCartEntityInputDto.getQuantity();
-    subtotal = shoppingCartEntityInputDto.getSubtotal();
+    subtotal = 0F;
+
+    setCurrentDateForInsert();
   }
 
   public void setCurrentDateForInsert() {
     registrationDate = LocalDateTime.now(ZoneId.of("America/Sao_Paulo"));
-    updateDate = LocalDateTime.now(ZoneId.of("America/Sao_Paulo"));
+
+    setCurrentDateForUpdate();
   }
 
   public void setCurrentDateForUpdate() {

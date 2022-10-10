@@ -1,9 +1,13 @@
 package com.esperanca.api.salessystem.dtos.customers;
 
 import com.esperanca.api.salessystem.entities.CustomerEntity;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
+@Getter
+@Setter
 public class CustomerOutputDto {
   private Integer id;
   private String name;

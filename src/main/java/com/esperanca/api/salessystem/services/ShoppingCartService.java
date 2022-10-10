@@ -1,5 +1,13 @@
 package com.esperanca.api.salessystem.services;
 
+import com.esperanca.api.salessystem.dtos.shoppingcarts.ShoppingCartInputDto;
+import com.esperanca.api.salessystem.dtos.shoppingcarts.ShoppingCartOutputDto;
+import com.esperanca.api.salessystem.entities.ProductEntity;
+import com.esperanca.api.salessystem.entities.PurchaseEntity;
+import com.esperanca.api.salessystem.entities.ShoppingCartEntity;
+import com.esperanca.api.salessystem.repositories.ProductRepository;
+import com.esperanca.api.salessystem.repositories.PurchaseRepository;
+import com.esperanca.api.salessystem.repositories.ShoppingCartRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,7 +19,7 @@ import java.util.stream.Collectors;
 @Service
 public class ShoppingCartService {
   @Autowired
-  PurchaseProductRepository purchaseProductRepository;
+  ShoppingCartRepository shoppingCartRepository;
 
   @Autowired
   ProductRepository productRepository;
@@ -20,52 +28,74 @@ public class ShoppingCartService {
   PurchaseRepository purchaseRepository;
 
   @Transactional
-  public PurchaseProductOutputDto save(PurchaseProductInputDto purchaseProductInputDto) {
-    PurchaseProductModel purchaseProductModel = new PurchaseProductModel(purchaseProductInputDto);
+  public ShoppingCartOutputDto save(ShoppingCartInputDto shoppingCartInputDto) {
+    ShoppingCartEntity shoppingCartEntity = new ShoppingCartEntity(shoppingCartInputDto);
 
-    ProductModel productModel = productRepository.findById(purchaseProductInputDto.getProduct()).get();
-    PurchaseModel purchaseModel = purchaseRepository.findById(purchaseProductInputDto.getPurchase()).get();
+    ProductEntity productEntity = productRepository.findById(shoppingCartInputDto.getProduct()).get();
+    PurchaseEntity purchaseEntity = purchaseRepository.findById(shoppingCartInputDto.getPurchase()).get();
 
-    purchaseProductModel.setProduct(productModel);
-    purchaseProductModel.setPurchase(purchaseModel);
-    purchaseProductModel.setCurrentDateForInsert();
+    Float subtotal = shoppingCartInputDto.getQuantity() * productEntity.getPrice();
+    Float total = purchaseEntity.getTotal() + subtotal;
 
-    purchaseProductRepository.save(purchaseProductModel);
+    purchaseEntity.setTotal(total);
 
-    return new PurchaseProductOutputDto(purchaseProductModel);
+    shoppingCartEntity.setQuantity(shoppingCartInputDto.getQuantity());
+    shoppingCartEntity.setSubtotal(subtotal);
+    shoppingCartEntity.setProduct(productEntity);
+    shoppingCartEntity.setPurchase(purchaseEntity);
+
+    shoppingCartRepository.save(shoppingCartEntity);
+
+    return new ShoppingCartOutputDto(shoppingCartEntity);
   }
 
   @Transactional
-  public PurchaseProductOutputDto save(PurchaseProductInputDto purchaseProductInputDto, Integer id) {
-    PurchaseProductModel purchaseProductModel = purchaseProductRepository.findById(id).get();
-    PurchaseModel purchaseModel = purchaseRepository.findById(purchaseProductInputDto.getPurchase()).get();
-    ProductModel productModel = productRepository.findById(purchaseProductInputDto.getProduct()).get();
+  public ShoppingCartOutputDto save(ShoppingCartInputDto shoppingCartInputDto, Integer id) {
+    ShoppingCartEntity shoppingCartEntity = shoppingCartRepository.findById(id).get();
+    PurchaseEntity purchaseEntity = purchaseRepository.findById(shoppingCartInputDto.getPurchase()).get();
+    ProductEntity productEntity = productRepository.findById(shoppingCartInputDto.getProduct()).get();
 
-    purchaseProductModel.setPurchase(purchaseModel);
-    purchaseProductModel.setProduct(productModel);
-    purchaseProductModel.setCurrentDateForUpdate();
+    float  subtotal = shoppingCartInputDto.getQuantity() * productEntity.getPrice();
 
-    purchaseProductRepository.save(purchaseProductModel);
+    Float currentShoppingCartValue = shoppingCartEntity.getSubtotal();
+    Float newPurchaseValue = (purchaseEntity.getTotal() - currentShoppingCartValue + subtotal);
 
-    return new PurchaseProductOutputDto(purchaseProductModel);
+    purchaseEntity.setTotal(newPurchaseValue);
+
+    shoppingCartEntity.setQuantity(shoppingCartInputDto.getQuantity());
+    shoppingCartEntity.setSubtotal(subtotal);
+    shoppingCartEntity.setProduct(productEntity);
+    shoppingCartEntity.setPurchase(purchaseEntity);
+    shoppingCartEntity.setCurrentDateForUpdate();
+
+    shoppingCartRepository.save(shoppingCartEntity);
+
+    return new ShoppingCartOutputDto(shoppingCartEntity);
   }
 
-  public List<PurchaseProductOutputDto> findAll() {
-    return purchaseProductRepository
+  public List<ShoppingCartOutputDto> findAll() {
+    return shoppingCartRepository
       .findAll()
       .stream()
-      .map(PurchaseProductOutputDto::new)
+      .map(ShoppingCartOutputDto::new)
       .collect(Collectors.toList());
   }
 
-  public Optional<PurchaseProductOutputDto> findById(Integer id) {
-    return purchaseProductRepository
+  public Optional<ShoppingCartOutputDto> findById(Integer id) {
+    return shoppingCartRepository
       .findById(id)
-      .map(PurchaseProductOutputDto::new);
+      .map(ShoppingCartOutputDto::new);
   }
 
   @Transactional
   public void deleteById(Integer id) {
-    purchaseProductRepository.deleteById(id);
+    ShoppingCartEntity shoppingCartEntity = shoppingCartRepository.findById(id).get();
+    PurchaseEntity purchaseEntity = purchaseRepository.findById(shoppingCartEntity.getPurchase().getId()).get();
+
+    Float newTotal = purchaseEntity.getTotal() - shoppingCartEntity.getSubtotal();
+
+    purchaseEntity.setTotal(newTotal);
+
+    shoppingCartRepository.deleteById(id);
   }
 }

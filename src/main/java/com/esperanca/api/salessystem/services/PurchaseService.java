@@ -1,5 +1,11 @@
 package com.esperanca.api.salessystem.services;
 
+import com.esperanca.api.salessystem.dtos.purchases.PurchaseInputDto;
+import com.esperanca.api.salessystem.dtos.purchases.PurchaseOutputDto;
+import com.esperanca.api.salessystem.entities.CustomerEntity;
+import com.esperanca.api.salessystem.entities.PurchaseEntity;
+import com.esperanca.api.salessystem.repositories.CustomerRepository;
+import com.esperanca.api.salessystem.repositories.PurchaseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,26 +24,25 @@ public class PurchaseService {
 
   @Transactional
   public PurchaseOutputDto save(PurchaseInputDto purchaseInputDto) {
-    CustomerModel customerModel = customerRepository.findById(purchaseInputDto.getCustomer()).get();
-    PurchaseModel purchaseModel = new PurchaseModel(purchaseInputDto);
+    CustomerEntity customerEntity = customerRepository.findById(purchaseInputDto.getCustomer()).get();
+    PurchaseEntity purchaseEntity = new PurchaseEntity();
 
-    purchaseModel.setCustomer(customerModel);
-    purchaseModel.setCurrentDateForInsert();
-    purchaseRepository.save(purchaseModel);
+    purchaseEntity.setCustomer(customerEntity);
+    purchaseRepository.save(purchaseEntity);
 
-    return new PurchaseOutputDto(purchaseModel);
+    return new PurchaseOutputDto(purchaseEntity);
   }
 
   @Transactional
   public PurchaseOutputDto save(PurchaseInputDto purchaseInputDto, Integer id) {
-    PurchaseModel purchaseModel = purchaseRepository.findById(id).get();
-    CustomerModel customerModel = customerRepository.findById(purchaseInputDto.getCustomer()).get();
+    PurchaseEntity purchaseEntity = purchaseRepository.findById(id).get();
+    CustomerEntity customerEntity = customerRepository.findById(purchaseInputDto.getCustomer()).get();
 
-    purchaseModel.setCustomer(customerModel);
-    purchaseModel.setCurrentDateForUpdate();
+    purchaseEntity.setCustomer(customerEntity);
+    purchaseEntity.setCurrentDateForUpdate();
+    purchaseRepository.save(purchaseEntity);
 
-    purchaseRepository.save(purchaseModel);
-    return new PurchaseOutputDto(purchaseModel);
+    return new PurchaseOutputDto(purchaseEntity);
   }
 
   public List<PurchaseOutputDto> findAll() {
