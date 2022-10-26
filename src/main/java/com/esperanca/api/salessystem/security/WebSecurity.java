@@ -1,7 +1,8 @@
-package com.esperanca.api.salessystem.configurations.security;
+package com.esperanca.api.salessystem.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -13,17 +14,15 @@ import org.springframework.security.web.SecurityFilterChain;
 public class WebSecurity {
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-    httpSecurity
+    return httpSecurity
       .httpBasic()
       .and()
       .authorizeHttpRequests()
-      .anyRequest()
-      .authenticated()
+            .antMatchers(HttpMethod.POST, "/users").permitAll()
+      .anyRequest().authenticated()
       .and()
-      .csrf()
-      .disable();
-
-    return httpSecurity.build();
+      .csrf().disable()
+      .build();
   }
 
   @Bean

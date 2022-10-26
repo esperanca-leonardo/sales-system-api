@@ -1,6 +1,9 @@
-package com.esperanca.api.salessystem.entities.security;
+package com.esperanca.api.salessystem.entities;
 
+import com.esperanca.api.salessystem.dtos.users.UserInputDto;
+import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -8,12 +11,13 @@ import org.springframework.security.core.userdetails.UserDetails;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.List;
 
-@Getter
-@Setter
+@Data
+@NoArgsConstructor
 @Entity
 @Table(name = "User")
-public class UserSecurityEntity implements UserDetails, Serializable {
+public class UserEntity implements Serializable, UserDetails {
   private static final long serialVersionUID = 1L;
 
   @Id
@@ -26,9 +30,20 @@ public class UserSecurityEntity implements UserDetails, Serializable {
   @Column(nullable = false)
   private String password;
 
+  @ManyToMany
+  @JoinTable(name = "users_roles",
+             joinColumns = @JoinColumn(name = "user_id"),
+             inverseJoinColumns = @JoinColumn(name = "role_id"))
+  private List<RoleEntity> roleSecurityEntities;
+
+  public UserEntity(UserInputDto userInputDto) {
+    username = userInputDto.getUsername();
+    password = userInputDto.getPassword();
+  }
+
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
-    return null;
+    return roleSecurityEntities;
   }
 
   @Override

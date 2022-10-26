@@ -1,6 +1,8 @@
 package com.esperanca.api.salessystem.enuns;
 
 public enum RoleName {
-  ADMIN,
-  USER
+  ROLE_ADMIN,
+  ROLE_STOCKIST,
+  ROLE_SELLER,
+  ROLE_COMMON;
 }

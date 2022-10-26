@@ -6,6 +6,7 @@ import com.esperanca.api.salessystem.dtos.customers.CustomerOutputDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -17,8 +18,9 @@ import java.util.Optional;
 @RequestMapping("/customers")
 public class CustomerController {
   @Autowired
-  CustomerService customerService;
+  private CustomerService customerService;
 
+  @PreAuthorize("hasAnyRole('ROLE_SELLER', 'ROLE_ADMIN')")
   @PostMapping
   public ResponseEntity<Object> insert(@RequestBody @Valid CustomerInputDto customerInputDto) {
     return ResponseEntity
@@ -26,6 +28,7 @@ public class CustomerController {
       .body(customerService.save(customerInputDto));
   }
 
+  @PreAuthorize("hasAnyRole('ROLE_SELLER', 'ROLE_ADMIN', 'ROLE_COMMON')")
   @GetMapping
   public ResponseEntity<List<CustomerOutputDto>> findAll() {
     return ResponseEntity
@@ -33,20 +36,22 @@ public class CustomerController {
       .body(customerService.findAll());
   }
 
+  @PreAuthorize("hasAnyRole('ROLE_SELLER', 'ROLE_ADMIN', 'ROLE_COMMON')")
   @GetMapping(value = "/{id}")
   public ResponseEntity<Object> findById(@PathVariable(value="id") Integer id) {
     Optional<CustomerOutputDto> customerOutputDtoOptional = customerService.findById(id);
 
     return customerOutputDtoOptional.isPresent()
       ? ResponseEntity
-        .status(HttpStatus.FOUND)
-        .body(customerOutputDtoOptional.get())
+      .status(HttpStatus.FOUND)
+      .body(customerOutputDtoOptional.get())
 
       : ResponseEntity
-        .status(HttpStatus.NOT_FOUND)
-        .body("Customer not found");
+      .status(HttpStatus.NOT_FOUND)
+      .body("Customer not found");
   }
 
+  @PreAuthorize("hasAnyRole('ROLE_SELLER', 'ROLE_ADMIN')")
   @DeleteMapping(value = "/{id}")
   public ResponseEntity<Object> deleteById(@PathVariable(value = "id") Integer id) {
     Optional<CustomerOutputDto> customerOutputDtoOptional = customerService.findById(id);
@@ -63,6 +68,7 @@ public class CustomerController {
       .body("Customer not found");
   }
 
+  @PreAuthorize("hasAnyRole('ROLE_SELLER', 'ROLE_ADMIN')")
   @PutMapping(value = "/{id}")
   public ResponseEntity<Object> updateById(@RequestBody @Valid CustomerInputDto customerInputDto,
                                            @PathVariable(value = "id") Integer id) {

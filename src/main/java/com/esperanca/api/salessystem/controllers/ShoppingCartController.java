@@ -10,6 +10,7 @@ import com.esperanca.api.salessystem.services.ShoppingCartService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -18,15 +19,16 @@ import java.util.Optional;
 
 @RestController
 @CrossOrigin(origins="*", maxAge=3600)
-@RequestMapping("/purchase-products")
+@RequestMapping("/shopping-carts")
 public class ShoppingCartController {
   @Autowired
-  ShoppingCartService shoppingCartService;
+  private ShoppingCartService shoppingCartService;
   @Autowired
-  ProductService productService;
+  private ProductService productService;
   @Autowired
-  PurchaseService purchaseService;
+  private PurchaseService purchaseService;
 
+  @PreAuthorize("hasAnyRole('ROLE_SELLER', 'ROLE_ADMIN')")
   @PostMapping
   public ResponseEntity<Object> save(@RequestBody @Valid ShoppingCartInputDto shoppingCartInputDto) {
     Optional<ProductOutputDto> productOutputDtoOptional = productService.findById(shoppingCartInputDto.getProduct());
@@ -51,6 +53,7 @@ public class ShoppingCartController {
     }
   }
 
+  @PreAuthorize("hasAnyRole('ROLE_SELLER', 'ROLE_ADMIN', 'ROLE_COMMON')")
   @GetMapping
   public ResponseEntity<List<ShoppingCartOutputDto>> findAll() {
     return ResponseEntity
@@ -58,6 +61,7 @@ public class ShoppingCartController {
       .body(shoppingCartService.findAll());
   }
 
+  @PreAuthorize("hasAnyRole('ROLE_SELLER', 'ROLE_ADMIN', 'ROLE_COMMON')")
   @GetMapping(value = "/{id}")
   public ResponseEntity<Object> findById(@PathVariable(value = "id") Integer id) {
     Optional<ShoppingCartOutputDto> shoppingCartOutputDtoOptional = shoppingCartService.findById(id);
@@ -74,6 +78,7 @@ public class ShoppingCartController {
     }
   }
 
+  @PreAuthorize("hasAnyRole('ROLE_SELLER', 'ROLE_ADMIN')")
   @DeleteMapping(value = "/{id}")
   public ResponseEntity<Object> deleteById(@PathVariable(value = "id") Integer id) {
     Optional<ShoppingCartOutputDto> shoppingCartOutputDtoOptional = shoppingCartService.findById(id);
@@ -90,6 +95,7 @@ public class ShoppingCartController {
       .body("PurchaseProduct not found!");
   }
 
+  @PreAuthorize("hasAnyRole('ROLE_SELLER', 'ROLE_ADMIN')")
   @PutMapping(value = "/{id}")
   public ResponseEntity<Object> updateById(@RequestBody @Valid ShoppingCartInputDto shoppingCartInputDto,
                                            @PathVariable(value = "id") Integer id) {

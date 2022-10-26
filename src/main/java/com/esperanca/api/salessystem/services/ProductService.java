@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 @Service
 public class ProductService {
   @Autowired
-  ProductRepository productRepository;
+  private ProductRepository productRepository;
   @Transactional
   public ProductOutputDto save(ProductInputDto productInputDto) {
     ProductEntity productEntity = new ProductEntity(productInputDto);

@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 @Service
 public class CustomerService {
   @Autowired
-  CustomerRepository customerRepository;
+  private CustomerRepository customerRepository;
 
   @Transactional
   public CustomerOutputDto save(CustomerInputDto customerInputDto) {

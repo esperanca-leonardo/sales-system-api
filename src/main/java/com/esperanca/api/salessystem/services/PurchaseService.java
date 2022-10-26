@@ -17,10 +17,10 @@ import java.util.stream.Collectors;
 @Service
 public class PurchaseService {
   @Autowired
-  PurchaseRepository purchaseRepository;
+  private PurchaseRepository purchaseRepository;
 
   @Autowired
-  CustomerRepository customerRepository;
+  private CustomerRepository customerRepository;
 
   @Transactional
   public PurchaseOutputDto save(PurchaseInputDto purchaseInputDto) {

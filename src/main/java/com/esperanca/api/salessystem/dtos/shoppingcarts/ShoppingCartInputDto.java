@@ -15,6 +15,6 @@ public class ShoppingCartInputDto {
   @Positive
   private Integer purchase;
 
-  @PositiveOrZero
+  @Positive
   private Integer quantity;
 }

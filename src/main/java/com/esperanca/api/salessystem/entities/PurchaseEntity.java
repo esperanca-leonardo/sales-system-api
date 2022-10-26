@@ -1,6 +1,8 @@
 package com.esperanca.api.salessystem.entities;
 
+import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -8,8 +10,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 
-@Getter
-@Setter
+@Data
 @Entity
 @Table(name = "Purchase")
 public class PurchaseEntity implements Serializable {

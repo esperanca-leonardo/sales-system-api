@@ -1,7 +1,9 @@
 package com.esperanca.api.salessystem.entities;
 
 import com.esperanca.api.salessystem.dtos.shoppingcarts.ShoppingCartInputDto;
+import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -9,8 +11,8 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 
-@Getter
-@Setter
+@Data
+@NoArgsConstructor
 @Entity
 @Table(name = "ShoppingCart")
 public class ShoppingCartEntity implements Serializable {
@@ -40,8 +42,6 @@ public class ShoppingCartEntity implements Serializable {
 
   @Column(nullable = false)
   private LocalDateTime updateDate;
-
-  public ShoppingCartEntity() {}
 
   public ShoppingCartEntity(ShoppingCartInputDto shoppingCartEntityInputDto) {
     quantity = shoppingCartEntityInputDto.getQuantity();

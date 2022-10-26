@@ -19,13 +19,13 @@ import java.util.stream.Collectors;
 @Service
 public class ShoppingCartService {
   @Autowired
-  ShoppingCartRepository shoppingCartRepository;
+  private ShoppingCartRepository shoppingCartRepository;
 
   @Autowired
-  ProductRepository productRepository;
+  private ProductRepository productRepository;
 
   @Autowired
-  PurchaseRepository purchaseRepository;
+  private PurchaseRepository purchaseRepository;
 
   @Transactional
   public ShoppingCartOutputDto save(ShoppingCartInputDto shoppingCartInputDto) {
@@ -39,7 +39,6 @@ public class ShoppingCartService {
 
     purchaseEntity.setTotal(total);
 
-    shoppingCartEntity.setQuantity(shoppingCartInputDto.getQuantity());
     shoppingCartEntity.setSubtotal(subtotal);
     shoppingCartEntity.setProduct(productEntity);
     shoppingCartEntity.setPurchase(purchaseEntity);
@@ -52,20 +51,20 @@ public class ShoppingCartService {
   @Transactional
   public ShoppingCartOutputDto save(ShoppingCartInputDto shoppingCartInputDto, Integer id) {
     ShoppingCartEntity shoppingCartEntity = shoppingCartRepository.findById(id).get();
-    PurchaseEntity purchaseEntity = purchaseRepository.findById(shoppingCartInputDto.getPurchase()).get();
+    PurchaseEntity currentPurchaseEntity = shoppingCartEntity.getPurchase();
+    PurchaseEntity newPurchaseEntity =purchaseRepository.findById(shoppingCartInputDto.getPurchase()).get();
     ProductEntity productEntity = productRepository.findById(shoppingCartInputDto.getProduct()).get();
 
-    float  subtotal = shoppingCartInputDto.getQuantity() * productEntity.getPrice();
+    float newSubtotal = shoppingCartInputDto.getQuantity() * productEntity.getPrice();
+    float oldSubtotal = shoppingCartEntity.getSubtotal();
 
-    Float currentShoppingCartValue = shoppingCartEntity.getSubtotal();
-    Float newPurchaseValue = (purchaseEntity.getTotal() - currentShoppingCartValue + subtotal);
+    currentPurchaseEntity.setTotal(currentPurchaseEntity.getTotal() - oldSubtotal);
+    newPurchaseEntity.setTotal(newPurchaseEntity.getTotal() + newSubtotal);
 
-    purchaseEntity.setTotal(newPurchaseValue);
-
+    shoppingCartEntity.setPurchase(newPurchaseEntity);
     shoppingCartEntity.setQuantity(shoppingCartInputDto.getQuantity());
-    shoppingCartEntity.setSubtotal(subtotal);
+    shoppingCartEntity.setSubtotal(newSubtotal);
     shoppingCartEntity.setProduct(productEntity);
-    shoppingCartEntity.setPurchase(purchaseEntity);
     shoppingCartEntity.setCurrentDateForUpdate();
 
     shoppingCartRepository.save(shoppingCartEntity);

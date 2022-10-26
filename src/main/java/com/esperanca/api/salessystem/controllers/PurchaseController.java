@@ -8,6 +8,7 @@ import com.esperanca.api.salessystem.services.PurchaseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -19,10 +20,11 @@ import java.util.Optional;
 @RequestMapping("/purchases")
 public class PurchaseController {
   @Autowired
-  PurchaseService purchaseService;
+  private PurchaseService purchaseService;
   @Autowired
-  CustomerService customerService;
+  private CustomerService customerService;
 
+  @PreAuthorize("hasAnyRole('ROLE_SELLER', 'ROLE_ADMIN')")
   @PostMapping
   public ResponseEntity<Object> save(@RequestBody @Valid PurchaseInputDto purchaseInputDto) {
     Optional<CustomerOutputDto> customerOutputDtoOptional = customerService.findById(purchaseInputDto.getCustomer());
@@ -37,6 +39,7 @@ public class PurchaseController {
         .body("Customer id not found!");
   }
 
+  @PreAuthorize("hasAnyRole('ROLE_SELLER', 'ROLE_ADMIN', 'ROLE_COMMON')")
   @GetMapping
   public ResponseEntity<List<PurchaseOutputDto>> findAll() {
     return ResponseEntity
@@ -44,6 +47,7 @@ public class PurchaseController {
       .body(purchaseService.findAll());
   }
 
+  @PreAuthorize("hasAnyRole('ROLE_SELLER', 'ROLE_ADMIN', 'ROLE_COMMON')")
   @GetMapping(value = "/{id}")
   public ResponseEntity<Object> findById(@PathVariable(value = "id") Integer id) {
     Optional<PurchaseOutputDto> purchaseOutputDtoOptional = purchaseService.findById(id);
@@ -53,11 +57,12 @@ public class PurchaseController {
         .status(HttpStatus.FOUND)
         .body(purchaseOutputDtoOptional.get())
 
-    : ResponseEntity
+      : ResponseEntity
       .status(HttpStatus.NOT_FOUND)
       .body("Purchase not found!");
   }
 
+  @PreAuthorize("hasAnyRole('ROLE_SELLER', 'ROLE_ADMIN')")
   @DeleteMapping(value = "/{id}")
   public ResponseEntity<Object> deleteById(@PathVariable(value = "id") Integer id) {
     Optional<PurchaseOutputDto> purchaseOutputDtoOptional = purchaseService.findById(id);
@@ -74,6 +79,7 @@ public class PurchaseController {
       .body("Purchase not found!");
   }
 
+  @PreAuthorize("hasAnyRole('ROLE_SELLER', 'ROLE_ADMIN')")
   @PutMapping(value = "/{id}")
   public ResponseEntity<Object> updateById(@RequestBody @Valid PurchaseInputDto purchaseInputDto,
                                            @PathVariable(value = "id") Integer id) {

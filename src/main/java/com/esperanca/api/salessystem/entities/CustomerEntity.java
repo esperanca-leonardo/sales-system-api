@@ -1,7 +1,9 @@
 package com.esperanca.api.salessystem.entities;
 
 import com.esperanca.api.salessystem.dtos.customers.CustomerInputDto;
+import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -9,11 +11,12 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 
-@Getter
-@Setter
+@Data
+@NoArgsConstructor
 @Entity
 @Table(name = "Customer")
 public class CustomerEntity implements Serializable {
+
   private static final long serialVersionUID = 1L;
 
   @Id
@@ -35,8 +38,6 @@ public class CustomerEntity implements Serializable {
 
   @Column(nullable = false)
   private LocalDateTime updateDate;
-
-  public CustomerEntity() {}
 
   public CustomerEntity(CustomerInputDto customerInputDto) {
     name = customerInputDto.getName();
